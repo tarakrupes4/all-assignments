@@ -32,6 +32,70 @@
 const express = require("express")
 const PORT = 3000;
 const app = express();
+const parser = require('body-parser');
+
+
+app.use(parser.json());
+const users = [];
+
+function getId() {
+  return users.length + 1;
+}
+function getToken(num) {
+  let token = 'isdfoiaseoifauiydfhaisesiddaifsd';
+  return token;
+}
+
+function authenticated(obj) {
+   const data = users.filter(
+     (d) => d.username === obj.username && d.password === obj.password
+   );
+   if (data.length > 0) {
+     return true;
+   }
+  return false;
+}
+app.post("/signup", (req, res) => {
+  const obj = req.body;
+  const dup = users.filter(data => data.username === obj.username);
+  if (dup.length > 0) {
+    res.status(400).send("username already exists");
+  }
+  let user = {
+    username: obj.username,
+    password: obj.password,
+    firstName: obj.firstName,
+    lastName: obj.lastName,
+    email:obj.email,
+    id: getId(),
+  };
+  users.push(user);
+  res.status(201).send('Signup successful');
+});
+
+app.post("/login", (req, res) => {
+  const obj = req.body;
+  const isAuthenticated = authenticated(obj);
+  if (isAuthenticated) {
+    res.send({ authToken: getToken(10) });
+  }
+  res.status(401).send("Unauthorized");
+});
+
+app.get("/data", (req, res) => {
+  const username = req.headers.username;
+  const password = req.headers.password;
+  const isAuth = authenticated({ "username": username, "password": password });
+  if (isAuth) {
+    res.send({"users":users});
+  }
+  res.status(401).send("Unauthorized");
+})
+
+
+
+// app.listen(PORT, () => { console.log("Application started") });
+
 // write your logic here, DONT WRITE app.listen(3000) when you're running tests, the tests will automatically start the server
 
 module.exports = app;

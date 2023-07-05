@@ -4,5 +4,7 @@
  */
 
 function sleep (seconds) {
-
+    while (true) {
+        
+    }
 }

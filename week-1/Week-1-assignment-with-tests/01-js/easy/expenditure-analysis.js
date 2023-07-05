@@ -8,8 +8,29 @@
   - `npm run test-expenditure-analysis`
 */
 
+
 function calculateTotalSpentByCategory(transactions) {
-  return [];
+  var hashMap = {};
+  for (var i = 0; i < transactions.length; i++){
+    if (transactions[i].category in hashMap) {
+      let amt = hashMap[transactions[i].category];
+      amt = amt + transactions[i].price;
+      hashMap[transactions[i].category] = amt;
+    } else {
+      hashMap[transactions[i].category] = transactions[i].price;
+    }
+  }
+  var list = [];
+  for (const key in hashMap) {
+    const catObj = {}
+    if (hashMap.hasOwnProperty(key)) {
+      const value = hashMap[key];
+      catObj['category'] = key;
+      catObj['totalSpent'] = value;
+      list.push(catObj);
+    }
+  }
+  return list;
 }
 
 module.exports = calculateTotalSpentByCategory;
